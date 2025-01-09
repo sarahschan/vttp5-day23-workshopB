@@ -1,6 +1,7 @@
 package vttp.batch5.paf.day23.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,21 @@ public class MainRestController {
     public ResponseEntity<String> processCheckout(@RequestBody String payload) {
         
         PurchaseOrder po = processJsonService.processPayload(payload);
-        return null;
+
+        HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "application/json");
+
+        try {
+            
+            checkoutService.processCheckout(po);
+            
+            return ResponseEntity.status(200).headers(headers).body(null); 
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return ResponseEntity.status(500).headers(headers).body(null);
+        }
+
     }
 }
