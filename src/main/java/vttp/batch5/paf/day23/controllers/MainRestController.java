@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import vttp.batch5.paf.day23.model.PurchaseOrder;
 import vttp.batch5.paf.day23.services.CheckoutService;
 import vttp.batch5.paf.day23.services.ProcessJsonService;
@@ -44,13 +46,22 @@ public class MainRestController {
         try {
             
             checkoutService.processCheckout(po);
+
+            JsonObject responseBody = Json.createObjectBuilder()
+                                        .add("message", "Order processed")
+                                        .build();
             
-            return ResponseEntity.status(200).headers(headers).body(null); 
+            return ResponseEntity.status(200).headers(headers).body(responseBody.toString()); 
 
         } catch (Exception e) {
 
             e.printStackTrace();
-            return ResponseEntity.status(500).headers(headers).body(null);
+
+            JsonObject responseBody = Json.createObjectBuilder()
+                                        .add("error message", e.getCause() + ": " + e.getMessage())
+                                        .build();
+
+            return ResponseEntity.status(500).headers(headers).body(responseBody.toString());
         }
 
     }
